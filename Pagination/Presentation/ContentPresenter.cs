@@ -40,7 +40,7 @@ namespace Pagination.Presentation
         {
             if (testData)
             {
-                ImageLocation = $"https://picsum.photos/id/{_randoPic.Next(13, 200)}/300/200";
+                ImageLocation = $"https://picsum.photos/id/{_randoPic.Next(0, 100)}/300/200";
                 PresentationOptions = (PresentationOption)_randoOption.Next(1, 8);
                 Checked = _randoOption.Next(0, 2) == 1;
                 switch (_randoOption.Next(1, 3))
