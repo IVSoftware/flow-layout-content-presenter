@@ -26,6 +26,7 @@ namespace Pagination
                         case TestDataOption.ImageRando:
                         case TestDataOption.ButtonRegular:
                         case TestDataOption.ButtonIrregular:
+                            TestDataOption = (TestDataOption)option;
                             break;
                         default:
                             throw new NotImplementedException();
@@ -34,6 +35,52 @@ namespace Pagination
             };
             Length = 25;
         }
+
+        private void OnLengthChanged()
+        {
+            var removed = contentPresenterFlowLayout.Items.ToArray();
+            contentPresenterFlowLayout.Items.Clear();
+            Task.Run(async () =>
+            {
+                foreach (var dispose in removed)
+                {
+                    removed = null;
+                }
+                await Task.Delay(TimeSpan.FromSeconds(1));
+                GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+            });
+            switch (TestDataOption)
+            {
+                case TestDataOption.ImageRando:
+                    contentPresenterFlowLayout.Items
+                        .AddRange(Enumerable.Range(0, Length)
+                        .Select((_ => new ContentPresenterViewModel(TestDataOption))));
+                    break;
+                case TestDataOption.ButtonRegular:
+                    contentPresenterFlowLayout.Items
+                        .AddRange(Enumerable.Range(0, Length)
+                        .Select((_ => new ContentPresenterViewModel(TestDataOption)
+                        {
+                            ButtonText = $"{_ + 1}",
+                        })));
+                    break;
+                case TestDataOption.ButtonIrregular:
+                    contentPresenterFlowLayout.Items
+                        .AddRange(Enumerable.Range(0, Length)
+                        .Select((_ => new ContentPresenterViewModel(TestDataOption)
+                        {
+                            ButtonText = $"{_ + 1}",
+                            Width = 10 * _randoSize.Next(10, 40),
+                            Height = 10 * _randoSize.Next(10, 40),
+                        })));
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+        int _length = 0;
+        static Random _randoSize = new (1);
+
         public int Length
         {
             get => _length;
@@ -42,37 +89,22 @@ namespace Pagination
                 if (!Equals(_length, value))
                 {
                     _length = value;
-                    var removed = contentPresenterFlowLayout.Items.ToArray();
-                    contentPresenterFlowLayout.Items.Clear();
-                    Task.Run(async() =>
-                    {
-                        foreach(var dispose in removed)
-                        {
-                            removed = null;
-                        }
-                        await Task.Delay(TimeSpan.FromSeconds(1)); 
-                        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
-                    });
-                    contentPresenterFlowLayout.Items
-                        .AddRange(Enumerable.Range(0, Length)
-                        .Select((_ => new ContentPresenterViewModel(TestDataOption))));
+                    OnLengthChanged();
                 }
             }
         }
-        int _length = 0;
-
         TestDataOption TestDataOption
         {
-            get => _TestOption;
+            get => _testDateOption;
             set
             {
-                if (!Equals(_TestOption, value))
-                {
-                    _TestOption = value;
-                }
+                // Don't check for changes here.
+                // if (!Equals(_testDateOption, value))
+                _testDateOption = value;
+                OnLengthChanged();
             }
         }
-        TestDataOption _TestOption = default;
+        TestDataOption _testDateOption = default;
 
     }
 }

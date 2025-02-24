@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Pagination.Presentation;
+using System.Configuration;
 using System.Diagnostics;
 
 namespace Pagination.Presentation
@@ -17,10 +18,31 @@ namespace Pagination.Presentation
             // Customize the behavior when the model loads.
             if (DataContext is ContentPresenterViewModel model)
             {
-                pictureBox.ImageLocation = model.ImageLocation;
-                pictureBox.Visible = model.PresentationOptions.HasFlag(PresentationOption.PictureBox);
-                checkBox.Visible = model.PresentationOptions.HasFlag(PresentationOption.CheckBox);
-                button.Visible = model.PresentationOptions.HasFlag(PresentationOption.Button);
+                switch (model.PresentationOptions)
+                {
+                    case PresentationOption.PictureBox:
+                        pictureBox.ImageLocation = model.ImageLocation;
+                        pictureBox.Visible = true;
+                        checkBox.Visible = false;
+                        button.Visible = false;
+                        break;
+                    case PresentationOption.PictureBoxWithEditingControls:
+                        pictureBox.Visible = true;
+                        checkBox.Visible = true;
+                        button.Visible = true;
+                        break;
+                    case PresentationOption.ButtonOnly:
+                        pictureBox.Visible = false;
+                        checkBox.Visible = false;
+                        button.Visible = true;
+                        button.Dock = DockStyle.Fill;
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+                if (model.ButtonText != null) button.Text = model.ButtonText;
+                Width = model.Width ?? 200;
+                Height = model.Height ?? 200;
                 checkBox.Checked = model.Checked == true;
             }
 
@@ -29,7 +51,7 @@ namespace Pagination.Presentation
     }
 
     [Flags]
-    public enum PresentationOption { PictureBox = 0x1, CheckBox = 0x2, Button = 0x4 }
+    public enum PresentationOption { PictureBox, PictureBoxWithEditingControls, ButtonOnly }
 
     [JsonObject]
     public class ContentPresenterViewModel
@@ -43,27 +65,14 @@ namespace Pagination.Presentation
             {
                 case TestDataOption.ImageRando:
                     ImageLocation = localGetNextPictureLink();
-                    PresentationOptions = (PresentationOption)_randoOption.Next(1, 8);
+                    PresentationOptions = (PresentationOption)_randoOption.Next(0, 2);
                     Checked = _randoOption.Next(0, 2) == 1;
-                    switch (_randoOption.Next(1, 3))
-                    {
-                        case 0:
-                            PresentationOptions = PresentationOption.PictureBox;
-                            break;
-                        case 1:
-                            PresentationOptions = PresentationOption.PictureBox | PresentationOption.CheckBox | PresentationOption.Button;
-                            ButtonText = "Edit";
-                            break;
-                        case 2:
-                            PresentationOptions = PresentationOption.PictureBox;
-                            ButtonText = "Button Only";
-                            break;
-                        default: throw new InvalidOperationException();
-                    }
                     break;
                 case TestDataOption.ButtonRegular:
+                    PresentationOptions = PresentationOption.ButtonOnly;
                     break;
                 case TestDataOption.ButtonIrregular:
+                    PresentationOptions = PresentationOption.ButtonOnly;
                     break;
                 default:
                     break;
@@ -87,6 +96,6 @@ namespace Pagination.Presentation
         public Color? BackColorColor { get; set; }
         public string? ImageLocation { get; set; }
         public bool? Checked { get; set; }
-        public string ButtonText { get; set; } = string.Empty;
+        public string? ButtonText { get; set; }
     }
 }
