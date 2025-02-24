@@ -27,6 +27,7 @@ namespace Pagination.Presentation
                         button.Visible = false;
                         break;
                     case PresentationOption.PictureBoxWithEditingControls:
+                        pictureBox.ImageLocation = model.ImageLocation;
                         pictureBox.Visible = true;
                         checkBox.Visible = true;
                         button.Visible = true;
