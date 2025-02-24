@@ -54,7 +54,10 @@ namespace Pagination
                 case TestDataOption.ImageRando:
                     contentPresenterFlowLayout.Items
                         .AddRange(Enumerable.Range(0, Length)
-                        .Select((_ => new ContentPresenterViewModel(TestDataOption))));
+                        .Select((_ => new ContentPresenterViewModel(TestDataOption)
+                        {
+                            ButtonText = "Edit",
+                        })));
                     break;
                 case TestDataOption.ButtonRegular:
                     contentPresenterFlowLayout.Items

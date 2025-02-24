@@ -90,7 +90,6 @@
             button.Name = "button";
             button.Size = new Size(111, 34);
             button.TabIndex = 3;
-            button.Text = "Edit";
             button.UseVisualStyleBackColor = false;
             // 
             // ContentPresenter

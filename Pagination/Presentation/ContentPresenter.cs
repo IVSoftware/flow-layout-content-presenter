@@ -11,6 +11,14 @@ namespace Pagination.Presentation
         {
             InitializeComponent();
             Visible = DataContext != null;
+            button.Click += (sender, e) =>
+            {
+                var msg =
+                    string.IsNullOrWhiteSpace(button.Text)
+                    ? "the Button."
+                    : button.Text;
+                MessageBox.Show($"You clicked {msg}");
+            };
         }
         protected override void OnDataContextChanged(EventArgs e)
         {
@@ -46,7 +54,6 @@ namespace Pagination.Presentation
                 Height = model.Height ?? 200;
                 checkBox.Checked = model.Checked == true;
             }
-
             Visible = DataContext != null;
         }
     }
