@@ -75,14 +75,14 @@
             itemsToolStripMenuItem.Name = "itemsToolStripMenuItem";
             itemsToolStripMenuItem.Size = new Size(433, 40);
             itemsToolStripMenuItem.Text = "25 Items";
-            itemsToolStripMenuItem.Tag = TestOption.Items25;
+            itemsToolStripMenuItem.Tag = TestLengthOption.Items25;
             // 
             // itemsToolStripMenuItem1
             // 
             itemsToolStripMenuItem1.Name = "itemsToolStripMenuItem1";
             itemsToolStripMenuItem1.Size = new Size(433, 40);
             itemsToolStripMenuItem1.Text = "1M Items";
-            itemsToolStripMenuItem1.Tag = TestOption.Items1M;
+            itemsToolStripMenuItem1.Tag = TestLengthOption.Items1M;
             // 
             // toolStripMenuItem1
             // 
@@ -94,21 +94,21 @@
             imageWithRandoControlsToolStripMenuItem.Name = "imageWithRandoControlsToolStripMenuItem";
             imageWithRandoControlsToolStripMenuItem.Size = new Size(433, 40);
             imageWithRandoControlsToolStripMenuItem.Text = "Image With Random Controls";
-            imageWithRandoControlsToolStripMenuItem.Tag = TestOption.ImageRando;
+            imageWithRandoControlsToolStripMenuItem.Tag = TestDataOption.ImageRando;
             // 
             // regularButtonsToolStripMenuItem
             // 
             regularButtonsToolStripMenuItem.Name = "regularButtonsToolStripMenuItem";
             regularButtonsToolStripMenuItem.Size = new Size(433, 40);
             regularButtonsToolStripMenuItem.Text = "Regular Buttons";
-            regularButtonsToolStripMenuItem.Tag = TestOption.ButtonRegular;
+            regularButtonsToolStripMenuItem.Tag = TestDataOption.ButtonRegular;
             // 
             // irregularButtonsToolStripMenuItem
             // 
             irregularButtonsToolStripMenuItem.Name = "irregularButtonsToolStripMenuItem";
             irregularButtonsToolStripMenuItem.Size = new Size(433, 40);
             irregularButtonsToolStripMenuItem.Text = "Irregular Buttons";
-            irregularButtonsToolStripMenuItem.Tag = TestOption.ButtonIrregular;
+            irregularButtonsToolStripMenuItem.Tag = TestDataOption.ButtonIrregular;
             // 
             // MainForm
             // 

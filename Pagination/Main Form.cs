@@ -2,46 +2,77 @@ using Pagination.Presentation;
 
 namespace Pagination
 {
-    enum TestOption { Items25, Items1M, ImageRando, ButtonRegular, ButtonIrregular }
+    [Flags]
+    public enum TestLengthOption { Items25, Items1M }
+    public enum TestDataOption { ImageRando, ButtonRegular, ButtonIrregular }
     public partial class MainForm : Form
     {
         // https://picsum.photos/
         public MainForm()
         {
             InitializeComponent();
-
-            const int NUMBER_OF_ITEMS = 1000000;
-
-            contentPresenterFlowLayout.Items.AddRange(
-                Enumerable.Range(0, NUMBER_OF_ITEMS).Select(_=>new ContentPresenterViewModel(testData: true)));
-
             testToolStripMenuItem.DropDownItemClicked += (sender, e) =>
             {
-                if (e.ClickedItem?.Tag is TestOption option)
+                if (e.ClickedItem?.Tag is Enum option)
                 {
                     switch (option)
                     {
-                        case TestOption.Items25:
-                            contentPresenterFlowLayout.Items.Clear();
-                            contentPresenterFlowLayout.Items.AddRange(
-                                Enumerable.Range(0, 25).Select(_ => new ContentPresenterViewModel(testData: true)));
+                        case TestLengthOption.Items25:
+                            Length = 25;
                             break;
-                        case TestOption.Items1M:
-                            contentPresenterFlowLayout.Items.Clear();
-                            contentPresenterFlowLayout.Items.AddRange(
-                                Enumerable.Range(0, 1000000).Select(_ => new ContentPresenterViewModel(testData: true)));
+                        case TestLengthOption.Items1M:
+                            Length = 1000000;
                             break;
-                        case TestOption.ImageRando:
-                            break;
-                        case TestOption.ButtonRegular:
-                            break;
-                        case TestOption.ButtonIrregular:
+                        case TestDataOption.ImageRando:
+                        case TestDataOption.ButtonRegular:
+                        case TestDataOption.ButtonIrregular:
                             break;
                         default:
                             throw new NotImplementedException();
                     }
                 }
             };
+            Length = 25;
         }
+        public int Length
+        {
+            get => _length;
+            set
+            {
+                if (!Equals(_length, value))
+                {
+                    _length = value;
+                    var removed = contentPresenterFlowLayout.Items.ToArray();
+                    contentPresenterFlowLayout.Items.Clear();
+                    Task.Run(async() =>
+                    {
+                        foreach(var dispose in removed)
+                        {
+                            removed = null;
+                        }
+                        await Task.Delay(TimeSpan.FromSeconds(1)); 
+                        GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+                    });
+                    contentPresenterFlowLayout.Items
+                        .AddRange(Enumerable.Range(0, Length)
+                        .Select((_ => new ContentPresenterViewModel(TestDataOption))));
+                }
+            }
+        }
+        int _length = 0;
+
+        TestDataOption TestDataOption
+        {
+            get => _TestOption;
+            set
+            {
+                if (!Equals(_TestOption, value))
+                {
+                    _TestOption = value;
+                }
+            }
+        }
+        TestDataOption _TestOption = default;
+
     }
 }

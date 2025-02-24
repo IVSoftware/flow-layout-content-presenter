@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Pagination.Presentation;
+using System.Diagnostics;
 
 namespace Pagination.Presentation
 {
@@ -13,7 +14,6 @@ namespace Pagination.Presentation
         protected override void OnDataContextChanged(EventArgs e)
         {
             base.OnDataContextChanged(e);
-
             // Customize the behavior when the model loads.
             if (DataContext is ContentPresenterViewModel model)
             {
@@ -34,30 +34,50 @@ namespace Pagination.Presentation
     [JsonObject]
     public class ContentPresenterViewModel
     {
-        static Random _randoPic = new Random(2), _randoOption = new Random(1);
+        static Random _randoIdIndex = new (3), _randoOption = new (1);
+        static readonly List<int> _distinctIds = new();
         public ContentPresenterViewModel() { }
-        public ContentPresenterViewModel(bool testData) : this()
+        public ContentPresenterViewModel(TestDataOption testOption) : this()
         {
-            if (testData)
+            switch (testOption)
             {
-                ImageLocation = $"https://picsum.photos/id/{_randoPic.Next(0, 100)}/300/200";
-                PresentationOptions = (PresentationOption)_randoOption.Next(1, 8);
-                Checked = _randoOption.Next(0, 2) == 1;
-                switch (_randoOption.Next(1, 3))
+                case TestDataOption.ImageRando:
+                    ImageLocation = localGetNextPictureLink();
+                    PresentationOptions = (PresentationOption)_randoOption.Next(1, 8);
+                    Checked = _randoOption.Next(0, 2) == 1;
+                    switch (_randoOption.Next(1, 3))
+                    {
+                        case 0:
+                            PresentationOptions = PresentationOption.PictureBox;
+                            break;
+                        case 1:
+                            PresentationOptions = PresentationOption.PictureBox | PresentationOption.CheckBox | PresentationOption.Button;
+                            ButtonText = "Edit";
+                            break;
+                        case 2:
+                            PresentationOptions = PresentationOption.PictureBox;
+                            ButtonText = "Button Only";
+                            break;
+                        default: throw new InvalidOperationException();
+                    }
+                    break;
+                case TestDataOption.ButtonRegular:
+                    break;
+                case TestDataOption.ButtonIrregular:
+                    break;
+                default:
+                    break;
+            }
+            string localGetNextPictureLink()
+            {
+                if(_distinctIds.Count == 0)
                 {
-                    case 0:
-                        PresentationOptions = PresentationOption.PictureBox;
-                        break;
-                    case 1:
-                        PresentationOptions = PresentationOption.PictureBox | PresentationOption.CheckBox | PresentationOption.Button;
-                        ButtonText = "Edit";
-                        break;
-                    case 2:
-                        PresentationOptions = PresentationOption.PictureBox;
-                        ButtonText = "Button Only";
-                        break;
-                    default: throw new InvalidOperationException();
+                    _distinctIds.AddRange(Enumerable.Range(12, 60).Select(_=>_));
                 }
+                var idIndex = _randoIdIndex.Next(_distinctIds.Count);
+                var id = _distinctIds[idIndex];
+                _distinctIds.RemoveAt(idIndex);
+                return $"https://picsum.photos/id/{id}/300/200";
             }
         }
         public PresentationOption PresentationOptions { get; set; } = PresentationOption.PictureBox;
